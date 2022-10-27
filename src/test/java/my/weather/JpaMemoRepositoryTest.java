@@ -39,8 +39,4 @@ public class JpaMemoRepositoryTest {
         Assertions.assertThat(id.get().getText()).isSameAs("jpa");
 
     }
-
-
-
-
 }
