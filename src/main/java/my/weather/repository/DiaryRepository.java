@@ -1,9 +1,10 @@
 package my.weather.repository;
 
+import my.weather.domain.Diary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-//@Repository
-//public class DiaryRepository extends JpaRepository<Diary, Integer> {
-//
-//}
+@Repository
+public interface DiaryRepository extends JpaRepository<Diary, Integer> {
+
+}
