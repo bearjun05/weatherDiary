@@ -1,13 +1,17 @@
 package my.weather.service;
 
+import my.weather.WeatherApplication;
 import my.weather.domain.DateWeather;
 import my.weather.domain.Diary;
+import my.weather.error.InvalidDate;
 import my.weather.repository.DateWeatherRepository;
 import my.weather.repository.DiaryRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,8 @@ public class DiaryService {
 
     private final DateWeatherRepository dateWeatherRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(WeatherApplication.class);
+
     public DiaryService(DiaryRepository diaryRepository, DateWeatherRepository dateWeatherRepository) {
         this.diaryRepository = diaryRepository;
         this.dateWeatherRepository = dateWeatherRepository;
@@ -46,6 +52,7 @@ public class DiaryService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void createDiary(LocalDate date, String text) {
+        logger.info("started to create diary");
 
         //날씨 데이터 가져오기 (API 에서 가져오기? or DB 에서 가져오기)
 //        String weatherData = getWeatherString();
@@ -59,6 +66,7 @@ public class DiaryService {
         nowDiary.setDateWeather(dateWeather);
         nowDiary.setText(text);
         diaryRepository.save(nowDiary);
+        logger.info("end to create diary");
     }
 
     private DateWeather getWeatherFromApi() {
@@ -84,11 +92,14 @@ public class DiaryService {
         }else{
             return dateWeatherListFromDB.get(0);
         }
-        return dateWeatherListFromDB.get(0);
+        return getWeatherFromApi();
     }
 
     @Transactional(readOnly = true)
     public List<Diary> readDiary(LocalDate date){
+//        if(date.isAfter(LocalDate.ofYearDay(3050, 1))){
+//            throw new InvalidDate();
+//        }
        return diaryRepository.findAllByDate(date);
 
     }
